@@ -6,6 +6,18 @@ from azureml.core.environment import Environment
 from azureml.core import Workspace
 from azureml.core.model import Model
 from azureml.core.conda_dependencies import CondaDependencies
+from os import environ
+def create_workspace(subscription_id,ws_name='myworkspace',create_resource_group=True,resource_group='myresourcegroup',location='eastus2'):
+    ws = Workspace.create(
+               name=ws_name,            
+               subscription_id=subscription_id,           
+               resource_group=resource_group,                 
+               create_resource_group=create_resource_group,                 
+               location=location                
+               )
+    print('Created Workspace')
+    ws.write_config()
+    print("Saved config file")
 
 def deploy(ws_name,model_name,path_to_model, 
            environment_name,register_environment,pip_packages,conda_packages,

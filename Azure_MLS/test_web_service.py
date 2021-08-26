@@ -1,5 +1,7 @@
 import requests
 from deploy import deploy
+import json
+from sklearn.preprocessing import MinMaxScaler
 
 pip_packages=['pandas==1.1.5', 'azureml-defaults','joblib==0.17.0'] 
 conda_packages = ['scikit-learn==0.23.2']
@@ -7,9 +9,9 @@ to_deploy = False
 
 if to_deploy:
     url = deploy(
-            ws_name = 'test_deploy',
-            model_name = '',
-            path_to_model = '', 
+            ws_name = 'myworkspace',
+            model_name = 'knnClassifierModel',
+            path_to_model = 'model/knn.pkl', 
             environment_name = 'env',
             register_environment = True,
             pip_packages = pip_packages,
@@ -22,9 +24,11 @@ if to_deploy:
 else:
     # replace with endpoint
     url = ''
-
+scaler = MinMaxScaler()
+data = {
+    'data': scaler.fit_transform([[0.9,0.1,0.1,0.9]]).tolist()
+}
 headers = {'Content-Type':'application/json'}
-r = requests.post(url,data = {}, headers = headers)
-
+r = requests.post(url, str.encode(json.dumps(data)), headers = headers)
 print(r.status_code)
 print(r.json())
